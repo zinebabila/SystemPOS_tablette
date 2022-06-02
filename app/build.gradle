@@ -66,4 +66,5 @@ dependencies {
     testImplementation "com.squareup.okhttp3:okhttp-sse:4.9.3"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0'
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.4.1"
+    implementation 'com.airbnb.android:lottie:4.1.0'
 }

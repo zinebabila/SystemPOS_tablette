@@ -6,6 +6,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -97,37 +98,35 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
             var str = intent.getStringExtra("action");
             println(str)
 
-            if(str =="succes") {
-                val builder: AlertDialog.Builder =
-                    AlertDialog.Builder(this@ProfilActivity)
-
-                builder.setMessage("success")
-                builder.setTitle("payment success !")
-                builder.setCancelable(false)
-                    .setNegativeButton(
-                        "Cancel",
-                        DialogInterface.OnClickListener { dialog, id ->
-                            dialog.cancel()
-                            goParent()
-                        })
-                val alert = builder.create()
+            if(str.equals("succes")) {
+                val dialogBuilder = AlertDialog.Builder(this@ProfilActivity)
+                dialogBuilder.setTitle("Success")
+                val inflater = LayoutInflater.from(this@ProfilActivity)
+                val dialogLayout = inflater.inflate(R.layout.dialogue, null)
+                dialogBuilder.setView(dialogLayout)
+                    .setCancelable(false)
+                    .setNegativeButton("OK", DialogInterface.OnClickListener {
+                            dialog, id -> dialog.cancel()
+                        goParent()
+                    })
+                val alert = dialogBuilder.create()
                 alert.show()
             }
-            if(str =="faillure") {
-                val builder: AlertDialog.Builder =
-                    AlertDialog.Builder(this@ProfilActivity)
-
-                builder.setMessage("faillure")
-                builder.setTitle("echec !")
-                builder.setCancelable(false)
-                    .setNegativeButton(
-                        "Cancel",
-                        DialogInterface.OnClickListener { dialog, id ->
-                            dialog.cancel()
-                            goParentsho()
-                        })
-                val alert = builder.create()
+            if(str.equals("faillure")) {
+                println("ic errrrrrrrrrrrrrrrrrror")
+                val dialogBuilder = AlertDialog.Builder(this@ProfilActivity)
+                dialogBuilder.setTitle("Faillure")
+                val inflater = LayoutInflater.from(this@ProfilActivity)
+                val dialogLayout = inflater.inflate(R.layout.dialoguefaile, null)
+                dialogBuilder.setView(dialogLayout)
+                    .setCancelable(false)
+                    .setNegativeButton("OK", DialogInterface.OnClickListener {
+                            dialog, id -> dialog.cancel()
+                        goParentsho()
+                    })
+                val alert = dialogBuilder.create()
                 alert.show()
+
             }
 
         }

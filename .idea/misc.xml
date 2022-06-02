@@ -4,6 +4,9 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/Lenovo/Desktop/SystemPOS_tablette/app/src/main/res/layout/activity_profil.xml" value="0.259375" />
+        <entry key="..\:/Users/Lenovo/Desktop/SystemPOS_tablette/app/src/main/res/layout/dialog_signin.xml" value="0.1" />
+        <entry key="..\:/Users/Lenovo/Desktop/SystemPOS_tablette/app/src/main/res/layout/dialogue.xml" value="0.1" />
+        <entry key="..\:/Users/Lenovo/Desktop/SystemPOS_tablette/app/src/main/res/layout/dialoguefaile.xml" value="0.259375" />
       </map>
     </option>
   </component>
