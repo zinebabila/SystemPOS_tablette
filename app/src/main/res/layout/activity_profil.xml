@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
+    android:background="#fffffa"
+    android:id="@+id/coordinator"
+    android:layout_width="match_parent"
+
+    >
+
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_anchor="@+id/drawer_layout"
+        app:layout_anchorGravity="center">
+        <!-- tools:openDrawer="start" -->
+        />
+
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.google.android.material.appbar.AppBarLayout
+                android:id="@+id/appBarLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fitsSystemWindows="true">
+
+            </com.google.android.material.appbar.AppBarLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/products_recyclerview"
+                android:layout_width="605dp"
+                android:layout_height="664dp"
+                android:layout_marginTop="180px"
+                android:visibility="visible" />
+
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar_main"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:layout_anchor="@+id/toolbar_main"
+                app:layout_anchorGravity="center"
+                app:layout_scrollFlags="scroll|enterAlways"></androidx.appcompat.widget.Toolbar>
+
+            <RelativeLayout
+                android:layout_width="855dp"
+                android:layout_height="777dp"
+                android:background="@drawable/background_border"
+                android:padding="15dp"
+                android:translationX="1300px"
+                android:translationY="165px">
+
+                <LinearLayout
+
+                    android:layout_width="379dp"
+                    android:layout_height="84dp"
+                    android:layout_alignParentStart="true"
+
+                    android:layout_marginStart="0dp"
+                    android:layout_marginLeft="15dp"
+                    android:translationX="250px"
+                    android:translationY="70px">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/username_text_input_layout"
+                        android:layout_width="213dp"
+                        android:layout_height="match_parent"
+                        app:endIconMode="clear_text"
+                        app:errorEnabled="true">
+
+                        <EditText
+                            android:id="@+id/coupncode"
+                            android:layout_width="match_parent"
+
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="48dp"
+                            android:layout_marginBottom="16dp"
+
+                            android:hint="Coupon"
+                            android:inputType="text"
+
+                            android:textSize="22sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <Button
+                        android:id="@+id/validercoupon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:text="validate"
+                        android:textAllCaps="false"
+                        android:textColor="@android:color/white"
+                        android:textSize="19sp"
+                        android:translationX="100px"
+                        android:translationY="10px" />
+                </LinearLayout>
+
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/shopping_cart_recyclerView"
+                    android:layout_width="488dp"
+                    android:layout_height="363dp"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:translationX="50px"
+                    android:translationY="255px"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+                <TextView
+                    android:id="@+id/totalLabel"
+                    android:layout_width="145dp"
+                    android:layout_height="wrap_content"
+                    android:text="Total"
+                    android:textSize="30sp"
+                    android:textStyle="bold"
+                    android:translationX="100px"
+                    android:translationY="1100px" />
+
+                <TextView
+                    android:id="@+id/total_price"
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="18dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:translationX="300px"
+
+                    android:translationY="1100px" />
+
+                <Button
+                    android:id="@+id/chekout"
+                    android:layout_width="195dp"
+                    android:layout_height="70dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginRight="18px"
+                    android:padding="10dp"
+
+                    android:text="Checkout"
+                    android:textAllCaps="false"
+                    android:textColor="@android:color/white"
+                    android:textSize="29sp"
+                    android:translationX="500px"
+                    android:translationY="1050px" />
+            </RelativeLayout>
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+        <com.google.android.material.navigation.NavigationView
+            android:id="@+id/nav_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            app:headerLayout="@layout/nav_header_main"
+            app:menu="@menu/activity_main_drawer" />
+    </androidx.drawerlayout.widget.DrawerLayout>
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+
+
