@@ -36,7 +36,13 @@
                 android:layout_height="664dp"
                 android:layout_marginTop="180px"
                 android:visibility="visible" />
-
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/animation_view1"
+                android:layout_width="313dp"
+                android:layout_height="322dp"
+                android:translationX="900px"
+                android:translationY="500px"
+                />
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar_main"
