@@ -18,14 +18,14 @@
 
         <ImageView
             android:id="@+id/product_im"
-            android:layout_width="170dp"
+            android:layout_width="123dp"
             android:layout_height="135dp"
             android:layout_weight=".5"
             android:scaleType="fitXY" />
 
 
         <LinearLayout
-            android:layout_width="221dp"
+            android:layout_width="130dp"
             android:layout_height="match_parent"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
@@ -98,12 +98,13 @@
 
         </LinearLayout>
 
-        <Button
+        <ImageView
             android:id="@+id/button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@android:drawable/ic_menu_delete"
-            android:icon="@android:drawable/ic_menu_delete"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="2dp"
+            android:src="@drawable/trash"
             android:translationX="-70px"
             android:translationY="90px" />
 

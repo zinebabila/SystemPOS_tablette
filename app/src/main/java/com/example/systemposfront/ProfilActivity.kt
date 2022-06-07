@@ -100,22 +100,60 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
             println(str)
 
             if(str.equals("succes")) {
-                val animationView: LottieAnimationView = findViewById(R.id.animation_view1)
+                val dialog = Dialog(this, R.style.DialogStyle)
+                dialog.setContentView(R.layout.layout_costumer_dialogue_pay)
+                dialog.getWindow()?.setBackgroundDrawableResource(R.drawable.bg_window)
+                var texttitle:TextView=dialog.findViewById(R.id.txttite2)
+                texttitle.text="Successful payment"
+                val animationView: LottieAnimationView = dialog.findViewById(R.id.animation_view2)
                 animationView.setAnimation(R.raw.successful)
-                animationView.repeatCount = 3
+                animationView.repeatCount = 100
                 animationView.playAnimation()
-                animationView.setOnClickListener(View.OnClickListener {
-                    goParent()
+                var textview:TextView=dialog.findViewById(R.id.txtDesc2)
+                var nom = intent.getStringExtra("firstname");
+                var prenom = intent.getStringExtra("lastName");
+                var currency = intent.getStringExtra("nameCurency");
+                var sum = intent.getStringExtra("somme");
+
+                textview.text="the client "+nom+" " +prenom+" "+" has paid "+ sum+" "+currency
+
+                val btnClose: ImageView = dialog.findViewById(R.id.btn_close2)
+
+                btnClose.setOnClickListener(View.OnClickListener { dialog.dismiss()
+                    intent.removeExtra("action")
                 })
+                var btnYes:Button=dialog.findViewById(R.id.btn_yes2)
+                btnYes.setOnClickListener(View.OnClickListener { dialog.dismiss()
+                    intent.removeExtra("action")
+                    })
+
+                dialog.show()
+
             }
             if(str.equals("faillure")) {
-                val animationView: LottieAnimationView = findViewById(R.id.animation_view1)
+                val dialog = Dialog(this, R.style.DialogStyle)
+                dialog.setContentView(R.layout.layout_costumer_dialogue_pay)
+                dialog.getWindow()?.setBackgroundDrawableResource(R.drawable.bg_window)
+                var texttitle:TextView=dialog.findViewById(R.id.txttite2)
+                texttitle.text="Payment failed"
+                val animationView: LottieAnimationView = dialog.findViewById(R.id.animation_view2)
                 animationView.setAnimation(R.raw.paymentfailed)
-                animationView.repeatCount = 3
+                animationView.repeatCount = 100
                 animationView.playAnimation()
-                animationView.setOnClickListener(View.OnClickListener {
-                    goParentsho()
+                var textview:TextView=dialog.findViewById(R.id.txtDesc2)
+                textview.text=""
+
+                val btnClose: ImageView = dialog.findViewById(R.id.btn_close2)
+
+                btnClose.setOnClickListener(View.OnClickListener { dialog.dismiss()
+                    intent.removeExtra("action")
+                    })
+                var btnYes:Button=dialog.findViewById(R.id.btn_yes2)
+                btnYes.setOnClickListener(View.OnClickListener { dialog.dismiss()
+              intent.removeExtra("action")
                 })
+
+                dialog.show()
 
             }
 
@@ -181,8 +219,6 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
             override fun onClick(view: View?) {
                 couponcode=findViewById(R.id.coupncode)
 
-
-
                 AccountEnd.authToken=session.gettokenDetails()
                 apiServiceCoupon = AccountEnd.retrofit.create(CouponController::class.java)
                 getCoupon(couponcode.text.toString())
@@ -201,9 +237,6 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
                 apiServiceMer = AccountEnd.retrofit.create(MerchantController::class.java)
 
                 afficher_devise()
-
-
-
 
                 val eventSourceListener = object : EventSourceListener() {
                     override fun onOpen(eventSource: EventSource, response: okhttp3.Response) {
@@ -260,7 +293,7 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
                     .build()
 
                 val request = Request.Builder()
-                    .url("http://192.168.86.23:9090/data/subscribes")
+                    .url("http://192.168.86.32:9090/data/subscribes")
                     // .header("Accept", "application/json; q=0.5")
                     // .addHeader("Accept", "text/event-stream")
 
@@ -286,15 +319,9 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
 
 
 
-    private fun goParentsho() {
-        val intent = Intent(this, ProfilActivity::class.java)
-        startActivity(intent)
-    }
 
-    private fun goParent() {
-        val intent = Intent(this, ProfilActivity::class.java)
-        startActivity(intent)
-    }
+
+
     private fun goechec() {
         val bundle = Bundle()
         val intent = Intent(this,ProfilActivity::class.java)
@@ -328,16 +355,24 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
                 println(t.message + "*******************************")
                 println("null")
                 t.message?.let { Log.d("Data error", it) }
-                val builder: AlertDialog.Builder = AlertDialog.Builder(this@ProfilActivity)
-                builder.setMessage("Wrong Code ?")
-                builder.setTitle("Alert !")
-                builder.setCancelable(false)
-                    .setNegativeButton("Cancel", DialogInterface.OnClickListener {
-                            dialog, id -> dialog.cancel()
-                    })
-                val alert = builder.create()
-                alert.show()
 
+                val dialog = Dialog(this@ProfilActivity, R.style.DialogStyle)
+                dialog.setContentView(R.layout.layout_custom_dialog)
+                dialog.getWindow()?.setBackgroundDrawableResource(R.drawable.bg_window)
+                var texttitle:TextView=dialog.findViewById(R.id.txttite)
+                texttitle.text="Alert !"
+
+                var textview:TextView=dialog.findViewById(R.id.txtDesc)
+                textview.text="Wrong Code ?"
+                val btnClose: ImageView = dialog.findViewById(R.id.btn_close)
+
+                btnClose.setOnClickListener(View.OnClickListener { dialog.dismiss()
+                     })
+                var btnYes:Button=dialog.findViewById(R.id.btn_yes)
+                btnYes.setOnClickListener(View.OnClickListener {
+                    dialog.dismiss()
+                } )
+                dialog.show()
             }
 
             override fun onResponse(call: Call<Coupon>, response: Response<Coupon>)
@@ -353,51 +388,69 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
                 var acutel=simpleDateFormat.parse(dateTime)
 
                 if(formattedDate.before(acutel)){
-                    val builder: AlertDialog.Builder = AlertDialog.Builder(this@ProfilActivity)
-                    builder.setMessage("Code is expired ?")
-                    builder.setTitle("Alert !")
-                    builder.setCancelable(false)
-                        .setNegativeButton("Cancel", DialogInterface.OnClickListener {
-                                dialog, id -> dialog.cancel()
-                        })
-                    val alert = builder.create()
-                    alert.show()
+                    val dialog = Dialog(this@ProfilActivity, R.style.DialogStyle)
+                    dialog.setContentView(R.layout.layout_custom_dialog)
+                    dialog.getWindow()?.setBackgroundDrawableResource(R.drawable.bg_window)
+                    var texttitle:TextView=dialog.findViewById(R.id.txttite)
+                    texttitle.text="Alert !"
+
+                    var textview:TextView=dialog.findViewById(R.id.txtDesc)
+                    textview.text="Code is expired ?"
+                    val btnClose: ImageView = dialog.findViewById(R.id.btn_close)
+
+                    btnClose.setOnClickListener(View.OnClickListener { dialog.dismiss()
+                    })
+                    var btnYes:Button=dialog.findViewById(R.id.btn_yes)
+                    btnYes.setOnClickListener(View.OnClickListener {
+                        dialog.dismiss()
+                    } )
+                    dialog.show()
                 }
                 else{
                     if(coupon!!.num_Uses==coupon!!.maxnum_Uses){
-                        val builder: AlertDialog.Builder = AlertDialog.Builder(this@ProfilActivity)
-                        builder.setMessage("Copon Coupon is cannot be used!!")
-                        builder.setTitle("Alert !")
-                        builder.setCancelable(false)
-                            .setNegativeButton("Cancel", DialogInterface.OnClickListener {
-                                    dialog, id -> dialog.cancel()
-                            })
-                        val alert = builder.create()
-                        alert.show()
+
+                        val dialog = Dialog(this@ProfilActivity, R.style.DialogStyle)
+                        dialog.setContentView(R.layout.layout_custom_dialog)
+                        dialog.getWindow()?.setBackgroundDrawableResource(R.drawable.bg_window)
+                        var texttitle:TextView=dialog.findViewById(R.id.txttite)
+                        texttitle.text="Alert !"
+
+                        var textview:TextView=dialog.findViewById(R.id.txtDesc)
+                        textview.text="Copon Coupon is cannot be used!!"
+                        val btnClose: ImageView = dialog.findViewById(R.id.btn_close)
+
+                        btnClose.setOnClickListener(View.OnClickListener { dialog.dismiss()
+                        })
+                        var btnYes:Button=dialog.findViewById(R.id.btn_yes)
+                        btnYes.setOnClickListener(View.OnClickListener {
+                            dialog.dismiss()
+                        } )
+                        dialog.show()
                     }
 
 
             else {
-
-
                         var prix = calculerprix(coupon!!.reduction)
                         val df = DecimalFormat("0.00") // import java.text.DecimalFormat;
-                        val builder: AlertDialog.Builder = AlertDialog.Builder(this@ProfilActivity)
-                        builder.setMessage(
-                            "Code is validated \n the total price is " + df.format(
-                                prix
-                            ) + "$"
-                        )
-                        builder.setTitle("Success !")
-                        builder.setCancelable(false)
-                            .setNegativeButton(
-                                "Cancel",
-                                DialogInterface.OnClickListener { dialog, id ->
-                                    dialog.cancel()
-                                })
-                        val alert = builder.create()
-                        alert.show()
+                        val dialog = Dialog(this@ProfilActivity, R.style.DialogStyle)
+                        dialog.setContentView(R.layout.costom_dialogue_scc)
+                        dialog.getWindow()?.setBackgroundDrawableResource(R.drawable.bg_window)
+                        var texttitle:TextView=dialog.findViewById(R.id.txttite1)
+                        texttitle.text="Success !"
 
+                        var textview:TextView=dialog.findViewById(R.id.txtDesc1)
+                        textview.text="Code is validated \n the total price is " + df.format(
+                            prix
+                        ) + "$"
+                        val btnClose: ImageView = dialog.findViewById(R.id.btn_close1)
+
+                        btnClose.setOnClickListener(View.OnClickListener { dialog.dismiss()
+                        })
+                        var btnYes:Button=dialog.findViewById(R.id.btn_yes1)
+                        btnYes.setOnClickListener(View.OnClickListener {
+                            dialog.dismiss()
+                        } )
+                        dialog.show()
                         modifierprixApresCoupon(df.format(prix))
                     }
 
@@ -535,32 +588,7 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
             super.onPostCreate(savedInstanceState)
             toggle.syncState()
         }
-    /*search.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
-        var timer = Timer()
 
-        override fun onQueryTextSubmit(query: String?): Boolean {
-            return false
-        }
-
-        override fun onQueryTextChange(newText: String): Boolean {
-            timer.cancel()
-            val sleep = when(newText.length) {
-                1 -> 1000L
-                2,3 -> 700L
-                4,5 -> 500L
-                else -> 300L
-            }
-            timer = Timer()
-           /* timer.schedule(sleep) {
-                if (!newText.isNullOrEmpty()) {
-                    // search
-                }*/
-            }
-            return true
-        }
-
-    })
-*/
 
     private fun getproductcat(id: Long): Int {
         val recyclerView = findViewById<RecyclerView>(R.id.products_recyclerview)
@@ -610,6 +638,7 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
     }
 
     fun refreshActivtiy() {
+
         recreate();
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -658,28 +687,5 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
         total_price=findViewById(R.id.total_price)
         total_price.text = df.format(totalPrice)
     }
-    /*   fun withEditText(view: View) {
-           val builder = AlertDialog.Builder(this)
-           val inflater = layoutInflater
-           builder.setTitle("With EditText")
-           val dialogLayout = inflater.inflate(R.layout.dialog_signin, null)
-           val editText  = dialogLayout.findViewById<EditText>(R.id.editText)
-           builder.setView(dialogLayout)
-           builder.setPositiveButton("OK") { dialogInterface, i -> Toast.makeText(applicationContext, "EditText is " + editText.text.toString(), Toast.LENGTH_SHORT).show() }
-           builder.show()
-       }*/
-    /* override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-     if (toggle.onOptionsItemSelected(item)) {
-         return true
-     }
-     return super.onOptionsItemSelected(item)
- }
- override fun onConfigurationChanged(newConfig: Configuration?) {
-     if (newConfig != null) {
-         super.onConfigurationChanged(newConfig)
-     }
-     toggle.onConfigurationChanged(newConfig)
- }
 
-*/
     }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/root_vg"
@@ -16,7 +17,7 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true" />
         <ImageView
-            android:id="@+id/btn_closeq"
+            android:id="@+id/btn_close"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginTop="2dp"
@@ -25,14 +26,23 @@
             android:layout_alignParentEnd="true"
             android:layout_marginRight="2dp"
             android:layout_alignParentRight="true" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <ImageView
+                android:id="@+id/img_icon"
+                android:layout_width="117dp"
+                android:layout_height="108dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="12dp"
+                android:elevation="8dp"
+                android:src="@drawable/cancel" />
 
             <TextView
-                android:id="@+id/txttiteq"
+                android:id="@+id/txttite"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -41,76 +51,34 @@
                 android:textSize="20sp" />
 
             <TextView
-                android:id="@+id/txtDescq"
+                android:id="@+id/txtDesc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:fontFamily="@font/open_sans"
                 android:gravity="center_horizontal"
-                android:textColor="@color/colorBlacky"
                 android:paddingStart="12dp"
-                android:paddingEnd="12dp"/>
-
-
-            <LinearLayout
-                android:id="@+id/inc"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_horizontal"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="12dp">
-
-                <TextView
-                    android:id="@+id/t1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="-"
-                    android:textSize="30sp"
-                    android:textStyle="bold"
-
-                    />
-                <TextView
-                    android:id="@+id/t2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="1"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:textSize="25sp"
-
-                    />
-                <TextView
-                    android:id="@+id/t3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="+"
-                    android:textSize="30sp"
-                    android:textStyle="bold"
-
-                    />
-
-            </LinearLayout>
+                android:paddingEnd="12dp"
+                android:textColor="@color/colorBlacky" />
 
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_horizontal"
+                android:layout_marginTop="12dp"
                 android:layout_marginBottom="8dp"
-                android:layout_marginTop="12dp">
-
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/btn_yesq"
+                    android:id="@+id/btn_yes"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="OK"
-                    android:backgroundTint="@color/colorAccent"
                     android:layout_marginStart="24dp"
                     android:layout_marginLeft="24dp"
-                    android:textColor="@color/black"/>
+                    android:backgroundTint="@color/colorAccent"
+                    android:text="Ok"
+                    android:textColor="@color/black" />
 
             </LinearLayout>
 
@@ -120,11 +88,3 @@
 
 
 </RelativeLayout>
-
-
-
-
-
-
-
-
