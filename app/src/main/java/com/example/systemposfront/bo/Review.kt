@@ -10,7 +10,7 @@ class Review {
 
     private var comment: String? = null
 
-    private var customer: Customer? = null
+    var customer: Customer? = null
 
     private var merchant: Merchant? = null
 

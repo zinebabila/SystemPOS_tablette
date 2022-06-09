@@ -24,10 +24,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.airbnb.lottie.LottieAnimationView
 import com.example.systemposfront.bo.*
 import com.example.systemposfront.bo.Currency
-import com.example.systemposfront.controller.CategorieController
-import com.example.systemposfront.controller.CouponController
-import com.example.systemposfront.controller.MerchantController
-import com.example.systemposfront.controller.ProductController
+import com.example.systemposfront.controller.*
 import com.example.systemposfront.interfaces.AccountEnd
 import com.example.systemposfront.security.TokenManager
 import com.google.android.material.navigation.NavigationView
@@ -55,9 +52,11 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
     lateinit var couponcode:TextView
     private  var coupon : Coupon?=null
     private lateinit var apiService: ProductController
+    private  lateinit var apiServiceNoti:NotificationController
     private lateinit var apiServiceCoupon: CouponController
     private lateinit var cat: CategorieController
     private lateinit var productAdapter: ProductAdapter
+    private lateinit var notiAdapter:Notif_Adapter
     private lateinit var drawer: DrawerLayout
     private lateinit var apimerchant:MerchantController
     private lateinit var toggle: ActionBarDrawerToggle
@@ -659,12 +658,66 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
                 return false
             }
         })
+        val notification=menu.findItem(R.id.notification)
+        notification.setOnMenuItemClickListener(MenuItem.OnMenuItemClickListener {
+
+            AccountEnd.authToken = session.gettokenDetails()
+            apiServiceNoti = AccountEnd.retrofit.create(NotificationController::class.java)
+            getNotification()
+
+
+
+
+            false
+        })
+
         return true
     }
 
-    fun modifiercounter() {
-        cart_size.text = ShoppingCart.getShoppingCartSize().toString()
-        println(ShoppingCart.getShoppingCartSize().toString()+"--------------------------------------")
+    private fun getNotification() {
+
+
+                val dialog = Dialog(this@ProfilActivity, R.style.DialogStyle)
+                dialog.setContentView(R.layout.dialogue_notif)
+                dialog.getWindow()?.setBackgroundDrawableResource(R.drawable.bg_window)
+                var texttitle:RecyclerView=dialog.findViewById(R.id.noti_RecycleView)
+
+                val btnClose: ImageView = dialog.findViewById(R.id.btn_closed)
+
+                btnClose.setOnClickListener(View.OnClickListener { dialog.dismiss()
+                })
+                var btnYes:Button=dialog.findViewById(R.id.btn_okk)
+                btnYes.setOnClickListener(View.OnClickListener {
+                    dialog.dismiss()
+                } )
+
+        apiServiceNoti.getNotification(session.getidAccount()).enqueue(object : retrofit2.Callback<ArrayList<Notification>> {
+            // apiService.getCategorie().enqueue(object : retrofit2.Callback<List<Category>> {
+            override fun onFailure(call: Call<ArrayList<Notification>>, t: Throwable) {
+
+                println(t.message + "*******************************")
+                // t.message?.let { Log.d("Data error", it) }
+
+            }
+
+            override fun onResponse(
+                call: Call<ArrayList<Notification>>,
+                response: Response<ArrayList<Notification>>
+            ) {
+
+                var products = response.body()!!
+                println(products)
+
+                notiAdapter = Notif_Adapter(this@ProfilActivity,products)
+              //  var shopping_cart_recyclerView: RecyclerView = findViewById(R.id.noti_RecycleView)
+                texttitle.layoutManager = LinearLayoutManager(this@ProfilActivity)
+                texttitle.adapter = notiAdapter
+
+
+            }
+
+        })
+        dialog.show()
     }
 
 

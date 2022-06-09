@@ -4,8 +4,9 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 
+
 @Serializable
-class Customer {
+class Customer: Person() {
     @SerializedName("reviews")
     @Expose
     private var reviews: Set<Review> = HashSet()
