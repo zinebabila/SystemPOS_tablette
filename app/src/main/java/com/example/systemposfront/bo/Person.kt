@@ -16,7 +16,7 @@ abstract class Person {
     @SerializedName("numTel")
     @Expose
      var numTel: String? = null
-    @SerializedName("urlImage")
+    @SerializedName("image")
     @Expose
-     var urlImage: String? = null
+     var image: Image? = null
 }

@@ -2,6 +2,10 @@ package com.example.systemposfront
 
 import android.content.Context
 import android.content.DialogInterface
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.os.Build
+import android.os.StrictMode
 
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +20,9 @@ import com.example.systemposfront.bo.CartItem
 import com.example.systemposfront.bo.Product
 import com.example.systemposfront.bo.ShoppingCart
 import com.squareup.picasso.Picasso
+import java.io.ByteArrayOutputStream
+import java.io.InputStream
+import java.net.URL
 
 
 class ShoppingCartAdapter(var context: Context, var cartItems: List<CartItem>) :
@@ -59,7 +66,21 @@ class ShoppingCartAdapter(var context: Context, var cartItems: List<CartItem>) :
                 itemDetail.text = "${cart.product.prix.toString()}$"
             }
 
-            Picasso.get().load(cart.product?.images?.get(0)?.urlImage).fit().into(itemImage)
+            val SDK_INT = Build.VERSION.SDK_INT
+            if (SDK_INT > 8) {
+                val policy = StrictMode.ThreadPolicy.Builder()
+                    .permitAll().build()
+                StrictMode.setThreadPolicy(policy)
+                val `in`: InputStream =
+                    URL("http://192.168.2.106:9090/images/get/"+cart.product.images?.id!!).openConnection().getInputStream()
+                var profilePic = BitmapFactory.decodeStream(`in`)
+
+                val stream = ByteArrayOutputStream()
+                profilePic.compress(Bitmap.CompressFormat.PNG, 100, stream)
+
+                itemImage.setImageBitmap(profilePic)
+                // imagePro.setImageBitmap(StringToBitMap(response.body()!!))
+            }
             // This displays the cart item information for each item
 
 

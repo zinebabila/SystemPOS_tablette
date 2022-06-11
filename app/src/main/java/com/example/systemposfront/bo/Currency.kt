@@ -27,4 +27,7 @@ class Currency {
     @Expose
 
     private var merchants: Set<Merchant?> = HashSet()
+    @SerializedName("symbol")
+    @Expose
+     val symbol: String? = null
 }

@@ -25,9 +25,9 @@ class Product {
     @SerializedName("qteStock")
     @Expose
      var qteStock = 0
-    @SerializedName("images")
+    @SerializedName("image")
     @Expose
-     var images = ArrayList<ImageProducts>()
+     var images :Image?=null
     @SerializedName("category")
     @Expose
      var category: Category? = null

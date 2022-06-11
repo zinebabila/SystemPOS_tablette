@@ -65,6 +65,7 @@ class CurrencyAdapter(var context: Context, var currencys: List<Currency> = arra
         var itemTitle: TextView
         var curenc:Long = 0
         var nomcurenc:String ?= null
+        var nomCurr:String?=null
 
         init {
             cart=itemView.findViewById(R.id.card)
@@ -80,7 +81,8 @@ class CurrencyAdapter(var context: Context, var currencys: List<Currency> = arra
             Picasso.get().load(product.imageCurrency).fit().into(itemImage)
 
             curenc = product.id!!
-            nomcurenc=product.currencyName!!
+            nomcurenc=product.symbol!!
+            nomCurr=product.currencyName!!
             cart.setOnClickListener(OnClickListener {
 
 
@@ -235,7 +237,7 @@ class CurrencyAdapter(var context: Context, var currencys: List<Currency> = arra
                     var str_response = response.body!!.string()
                     //creating json object
                     val parser: JSONObject = JSONObject(str_response)
-                    var tether=parser.getJSONObject(nomcurenc).getString("usd").toDouble()
+                    var tether=parser.getJSONObject(nomCurr?.lowercase()).getString("usd").toDouble()
 
                     println("imppppppppppppppppppppppppppppppportant")
                     println(tether)

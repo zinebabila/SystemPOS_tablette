@@ -16,7 +16,7 @@ interface AuthenEnd {
             .setLenient()
             .create()
 
-        private var BASE_URL = "http://192.168.86.32:9090"
+        private var BASE_URL = "http://192.168.2.106:9090"
 
         val retrofit: Retrofit = Retrofit.Builder()
             .addConverterFactory(ScalarsConverterFactory.create())

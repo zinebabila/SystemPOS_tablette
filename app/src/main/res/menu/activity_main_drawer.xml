@@ -1,8 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <item
+        android:id="@+id/menu_dynamic"
+        android:title="Option">
+        <menu>
+            <item android:title="Add Product"
+                android:id="@+id/addProduct">
+            </item>
+            <item android:title="Add Categorie"
+                android:id="@+id/addCat">
+            </item>
+        </menu>
+    </item>
     <item android:title="Categorie"
         android:id="@+id/pp">
+        <menu>
+
+        </menu>
     </item>
+
 
 </menu>

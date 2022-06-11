@@ -1,6 +1,10 @@
 package com.example.systemposfront
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.os.Build
+import android.os.StrictMode
 import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +13,9 @@ import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.example.systemposfront.bo.Notification
 import com.squareup.picasso.Picasso
+import java.io.ByteArrayOutputStream
+import java.io.InputStream
+import java.net.URL
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -49,12 +56,40 @@ class Notif_Adapter(var context: Context, var notifis: ArrayList<Notification> =
 
         fun bindProduct(notif: Notification) {
             if(notif.product!=null){
-                Picasso.get().load(notif.product!!.images[0].urlImage).fit().into(itemImage)
+                val SDK_INT = Build.VERSION.SDK_INT
+                if (SDK_INT > 8) {
+                    val policy = StrictMode.ThreadPolicy.Builder()
+                        .permitAll().build()
+                    StrictMode.setThreadPolicy(policy)
+                    val `in`: InputStream =
+                        URL("http://192.168.2.106:9090/images/get/"+ notif.product!!.images?.id!!).openConnection().getInputStream()
+                    var profilePic = BitmapFactory.decodeStream(`in`)
+
+                    val stream = ByteArrayOutputStream()
+                    profilePic.compress(Bitmap.CompressFormat.PNG, 100, stream)
+
+                    itemImage.setImageBitmap(profilePic)
+                    // imagePro.setImageBitmap(StringToBitMap(response.body()!!))
+                }
             }
             else{
                 println("************************")
-                println(notif.review!!.customer?.urlImage)
-                Picasso.get().load(notif.review!!.customer?.urlImage).fit().into(itemImage)
+                println(notif.review!!.customer?.image)
+                val SDK_INT = Build.VERSION.SDK_INT
+                if (SDK_INT > 8) {
+                    val policy = StrictMode.ThreadPolicy.Builder()
+                        .permitAll().build()
+                    StrictMode.setThreadPolicy(policy)
+                    val `in`: InputStream =
+                        URL("http://192.168.2.106:9090/images/get/"+ notif.review!!.customer!!.image?.id!!).openConnection().getInputStream()
+                    var profilePic = BitmapFactory.decodeStream(`in`)
+
+                    val stream = ByteArrayOutputStream()
+                    profilePic.compress(Bitmap.CompressFormat.PNG, 100, stream)
+
+                    itemImage.setImageBitmap(profilePic)
+                    // imagePro.setImageBitmap(StringToBitMap(response.body()!!))
+                }
             }
             itemDes.text=notif.description
             var  simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")

@@ -4,7 +4,11 @@ import android.app.Dialog
 import android.content.ContentValues
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.os.Build
 import android.os.Bundle
+import android.os.StrictMode
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
@@ -30,14 +34,21 @@ import com.example.systemposfront.security.TokenManager
 import com.google.android.material.navigation.NavigationView
 import com.squareup.picasso.Picasso
 import io.paperdb.Paper
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.RequestBody
 import okhttp3.sse.EventSource
 import okhttp3.sse.EventSourceListener
 import okhttp3.sse.EventSources
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Response
+import retrofit2.http.Part
+import java.io.ByteArrayOutputStream
+import java.io.InputStream
+import java.net.URL
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -77,7 +88,9 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
         super.onCreate(savedInstanceState)
         Paper.init(this)
         session = TokenManager(applicationContext)
+
         setContentView(R.layout.activity_profil)
+
       mNavigationView  = findViewById(R.id.nav_view)
      menuNav    = mNavigationView.menu
         val toolbar: Toolbar = findViewById(R.id.toolbar_main)
@@ -160,17 +173,38 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
 
         /**************************************les information du compte***************************************************/
         AccountEnd.authToken = session.gettokenDetails()
-        if(session.gettypeAccount()=="M") {
             apimerchant = AccountEnd.retrofit.create(MerchantController::class.java)
             apimerchant.getMerchant(session.getidAccount()).enqueue(object : retrofit2.Callback<Merchant> {
                 override fun onResponse(call: Call<Merchant>, response: Response<Merchant>) {
                     if (response.body() != null) {
                         var merchant = response.body()!!
-
-                        Picasso.get().load(merchant.urlImage).fit().into(imagePro)
+                        println(merchant.firstName!!)
                         detail.text =
                             merchant.firstName + "  " + merchant.lastName + "\n" + merchant.numTel
                         session.addinfo(merchant.firstName!!,merchant.lastName!!)
+if(merchant.image!=null) {
+    val SDK_INT = Build.VERSION.SDK_INT
+    if (SDK_INT > 8) {
+        val policy = StrictMode.ThreadPolicy.Builder()
+            .permitAll().build()
+        StrictMode.setThreadPolicy(policy)
+        val `in`: InputStream =
+            URL("http://192.168.2.106:9090/images/get/" + merchant.image?.id!!).openConnection()
+                .getInputStream()
+        var profilePic = BitmapFactory.decodeStream(`in`)
+
+        val stream = ByteArrayOutputStream()
+        profilePic.compress(Bitmap.CompressFormat.PNG, 100, stream)
+
+        imagePro.setImageBitmap(profilePic)
+        // imagePro.setImageBitmap(StringToBitMap(response.body()!!))
+    }
+}
+
+
+
+
+
 
                     } else {
                         println("error")
@@ -183,10 +217,6 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
                 }
 
             })
-        }
-        else{
-            println("n'est pas merchant est un caissier")
-        }
 
 
         /****************************les categories************************************/
@@ -292,7 +322,7 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
                     .build()
 
                 val request = Request.Builder()
-                    .url("http://192.168.86.32:9090/data/subscribes")
+                    .url("http://192.168.2.106:9090/data/subscribes")
                     // .header("Accept", "application/json; q=0.5")
                     // .addHeader("Accept", "text/event-stream")
 
@@ -552,51 +582,64 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
     }
 
 
-        fun getProducts() {
-            val recyclerView = findViewById<RecyclerView>(R.id.products_recyclerview)
-            recyclerView.setHasFixedSize(true)
-            recyclerView.layoutManager =
-                StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+    fun getProducts() {
+        val recyclerView = findViewById<RecyclerView>(R.id.products_recyclerview)
+        recyclerView.setHasFixedSize(true)
+        recyclerView.layoutManager =
+            StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
 
-            apiService.getProducts().enqueue(object : retrofit2.Callback<ArrayList<Product>> {
-                // apiService.getCategorie().enqueue(object : retrofit2.Callback<List<Category>> {
-                override fun onFailure(call: Call<ArrayList<Product>>, t: Throwable) {
+        /* val requestid= RequestBody.create("multipart/form-data".toMediaTypeOrNull(),"2")
+         val requestpage= RequestBody.create("multipart/form-data".toMediaTypeOrNull(), "1")
+         val requestsize= RequestBody.create("multipart/form-data".toMediaTypeOrNull(), "500")
+         val requestsorted= RequestBody.create("multipart/form-data".toMediaTypeOrNull(), "id")
+         val requestreverse= RequestBody.create("multipart/form-data".toMediaTypeOrNull(), "true")*/
+        apiService.getProducts(session.getidAccount()).enqueue(object : retrofit2.Callback<ArrayList<Product>> {
+            // apiService.getCategorie().enqueue(object : retrofit2.Callback<List<Category>> {
+            override fun onFailure(call: Call<ArrayList<Product>>, t: Throwable) {
 
-                    println(t.message + "*******************************")
-                    t.message?.let { Log.d("Data error", it) }
+                println(t.message + "*******************************")
+                t.message?.let { Log.d("Data error", it) }
 
-                }
+            }
 
-                override fun onResponse(
-                    call: Call<ArrayList<Product>>,
-                    response: Response<ArrayList<Product>>
-                ) {
+            override fun onResponse(
+                call: Call<ArrayList<Product>>,
+                response: Response<ArrayList<Product>>
+            ) {
 
+                if(response.body()!=null) {
                     products = response.body()!!
                     println(products)
                     productAdapter = ProductAdapter(products as ArrayList<Product>)
                     recyclerView.adapter = productAdapter
-
                 }
+                else{
+                    println("il y a rien")
+                }
+            }
 
-            })
+        })
 
-        }
+    }
 
         override fun onPostCreate(savedInstanceState: Bundle?) {
             super.onPostCreate(savedInstanceState)
             toggle.syncState()
         }
 
-
     private fun getproductcat(id: Long): Int {
         val recyclerView = findViewById<RecyclerView>(R.id.products_recyclerview)
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager =
             StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+        /*  val requestidcat= RequestBody.create("multipart/form-data".toMediaTypeOrNull(),id.toString())
+          val requestid= RequestBody.create("multipart/form-data".toMediaTypeOrNull(),"1")
+          val requestpage= RequestBody.create("multipart/form-data".toMediaTypeOrNull(), "1")
+          val requestsize= RequestBody.create("multipart/form-data".toMediaTypeOrNull(), "500")
+          val requestsorted= RequestBody.create("multipart/form-data".toMediaTypeOrNull(), "id")
+          val requestreverse= RequestBody.create("multipart/form-data".toMediaTypeOrNull(), "true")*/
 
-
-        apiService.getProductCat(id).enqueue(object : retrofit2.Callback<ArrayList<Product>> {
+        apiService.getProductCat(session.getidAccount(),id).enqueue(object : retrofit2.Callback<ArrayList<Product>> {
             // apiService.getCategorie().enqueue(object : retrofit2.Callback<List<Category>> {
             override fun onFailure(call: Call<ArrayList<Product>>, t: Throwable) {
 
@@ -617,8 +660,9 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
         return 1
     }
 
+
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        if(item.itemId!=R.id.pp){
+        if(item.itemId!=R.id.pp&&item.itemId!=R.id.addProduct&&item.itemId!=R.id.addCat){
             if(item.itemId==0){
                 apiService = AccountEnd.retrofit.create(ProductController::class.java)
                 getProducts()
@@ -632,7 +676,14 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
                 drawer.closeDrawer(GravityCompat.START)
                 return true}
         }
-
+        if(item.itemId==R.id.addProduct){
+            goToSecondActivity("addproduct")
+            return true
+        }
+        if(item.itemId==R.id.addCat){
+            goToSecondActivity("addCategorie")
+            return true
+        }
         return false
     }
 
@@ -739,6 +790,19 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
 
         total_price=findViewById(R.id.total_price)
         total_price.text = df.format(totalPrice)
+    }
+    private fun goToSecondActivity( type:String ) {
+        if(type.equals("addproduct")) {
+            val bundle = Bundle()
+            val intent = Intent(this, AddProductActivity::class.java)
+            startActivity(intent)
+        }
+        if(type.equals("addCategorie")) {
+            val intent = Intent(this, AddCategorieActivity::class.java)
+            startActivity(intent)
+        }
+
+
     }
 
     }
