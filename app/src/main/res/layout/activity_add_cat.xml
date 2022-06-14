@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:background="#fffffdff"
     android:layout_height="match_parent"
-    tools:context=".ShoppingCartActivity">
+   >
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,13 +22,13 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <LinearLayout
-        android:layout_width="316dp"
+        android:layout_width="616dp"
         android:layout_height="432dp"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="false"
         android:layout_marginLeft="15dp"
         android:orientation="vertical"
-        android:translationX="10px"
+        android:translationX="610px"
         android:translationY="300px"
         tools:ignore="RtlCompat">
 
@@ -43,7 +43,7 @@
             android:textStyle="bold" />
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/username_text_input_layout"
-            android:layout_width="343dp"
+            android:layout_width="443dp"
             android:layout_height="wrap_content"
             app:endIconMode="clear_text"
             app:errorEnabled="true">

@@ -32,8 +32,8 @@ interface ProductController {
     fun getProducts(@Path("id") id:Long): Call<ArrayList<Product>>
     @GET("/products/getOne/{id}")
     fun getProduct(@Path("id") id:Long): Call<Product>
-    @GET("/products/getCat")
-    fun getProductCat(@Path("id") id:Long,@Path("idcat") idcat:Long): Call<ArrayList<Product>>
+    @GET("/categories/getAllProducts/{id}/{id2}")
+    fun getProductCat(@Path("id") id:Long,@Path("id2") idcat:Long): Call<ArrayList<Product>>
     @Multipart
     @POST("/products/add")
     fun addProduct(@Part  file: MultipartBody.Part,

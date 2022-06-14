@@ -15,6 +15,8 @@
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning"
         android:theme="@style/AppTheme"
+        android:largeHeap="true"
+        android:hardwareAccelerated="false"
 
         >
 
@@ -48,10 +50,12 @@
 
             >
         </activity>
-<activity android:name=".AddProductActivity"
-    android:exported="true"/>
+      <activity android:name=".AddProductActivity"
+    android:exported="true"
+          android:parentActivityName=".ProfilActivity"/>
         <activity android:name=".AddCategorieActivity"
-            android:exported="true"/>
+            android:exported="true"
+            android:parentActivityName=".ProfilActivity"/>
     </application>
 
 </manifest>

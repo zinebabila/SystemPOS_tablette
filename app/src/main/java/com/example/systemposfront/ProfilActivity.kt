@@ -72,7 +72,6 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
     private lateinit var apimerchant:MerchantController
     private lateinit var toggle: ActionBarDrawerToggle
     private var cats = listOf<Category>()
-    private var products = listOf<Product>()
     lateinit var menuNav: Menu
     lateinit var mNavigationView: NavigationView
     lateinit var adapter: ShoppingCartAdapter
@@ -81,6 +80,7 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
     private lateinit var apiServiceMer: MerchantController
     private lateinit var merchant : Merchant
     private  var currency= listOf<Currency>()
+    private lateinit var recyclerView:RecyclerView
 
     private lateinit var curencyAdapter: CurrencyAdapter
     lateinit var currencys_recyclerview: RecyclerView
@@ -90,7 +90,7 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
         session = TokenManager(applicationContext)
 
         setContentView(R.layout.activity_profil)
-
+//ShoppingCart.deleteCart()
       mNavigationView  = findViewById(R.id.nav_view)
      menuNav    = mNavigationView.menu
         val toolbar: Toolbar = findViewById(R.id.toolbar_main)
@@ -182,30 +182,9 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
                         detail.text =
                             merchant.firstName + "  " + merchant.lastName + "\n" + merchant.numTel
                         session.addinfo(merchant.firstName!!,merchant.lastName!!)
-if(merchant.image!=null) {
-    val SDK_INT = Build.VERSION.SDK_INT
-    if (SDK_INT > 8) {
-        val policy = StrictMode.ThreadPolicy.Builder()
-            .permitAll().build()
-        StrictMode.setThreadPolicy(policy)
-        val `in`: InputStream =
-            URL("http://192.168.2.106:9090/images/get/" + merchant.image?.id!!).openConnection()
-                .getInputStream()
-        var profilePic = BitmapFactory.decodeStream(`in`)
-
-        val stream = ByteArrayOutputStream()
-        profilePic.compress(Bitmap.CompressFormat.PNG, 100, stream)
-
-        imagePro.setImageBitmap(profilePic)
-        // imagePro.setImageBitmap(StringToBitMap(response.body()!!))
-    }
-}
-
-
-
-
-
-
+               if(merchant.image!=null) {
+                     Picasso.get().load(merchant.image?.Url).into(imagePro)
+                                        }
                     } else {
                         println("error")
                     }
@@ -235,12 +214,8 @@ if(merchant.image!=null) {
         adapter.notifyDataSetChanged()
         var shopping_cart_recyclerView: RecyclerView = findViewById(R.id.shopping_cart_recyclerView)
         shopping_cart_recyclerView.adapter = adapter
-
         shopping_cart_recyclerView.layoutManager = LinearLayoutManager(this)
-
         modifierprix()
-
-
 
         valider=findViewById(R.id.validercoupon)
         valider.setOnClickListener(object : View.OnClickListener {
@@ -322,7 +297,7 @@ if(merchant.image!=null) {
                     .build()
 
                 val request = Request.Builder()
-                    .url("http://192.168.2.106:9090/data/subscribes")
+                    .url("http://192.168.86.23:9090/data/subscribes")
                     // .header("Accept", "application/json; q=0.5")
                     // .addHeader("Accept", "text/event-stream")
 
@@ -344,12 +319,6 @@ if(merchant.image!=null) {
 
 
     }
-
-
-
-
-
-
 
     private fun goechec() {
         val bundle = Bundle()
@@ -583,10 +552,9 @@ if(merchant.image!=null) {
 
 
     fun getProducts() {
-        val recyclerView = findViewById<RecyclerView>(R.id.products_recyclerview)
-        recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager =
-            StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+        recyclerView = findViewById<RecyclerView>(R.id.products_recyclerview)
+        recyclerView.setHasFixedSize(false)
+        recyclerView.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
 
         /* val requestid= RequestBody.create("multipart/form-data".toMediaTypeOrNull(),"2")
          val requestpage= RequestBody.create("multipart/form-data".toMediaTypeOrNull(), "1")
@@ -608,7 +576,7 @@ if(merchant.image!=null) {
             ) {
 
                 if(response.body()!=null) {
-                    products = response.body()!!
+                   var products = response.body()!!
                     println(products)
                     productAdapter = ProductAdapter(products as ArrayList<Product>)
                     recyclerView.adapter = productAdapter
@@ -627,53 +595,59 @@ if(merchant.image!=null) {
             toggle.syncState()
         }
 
-    private fun getproductcat(id: Long): Int {
-        val recyclerView = findViewById<RecyclerView>(R.id.products_recyclerview)
-        recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager =
-            StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+    private fun getproductcat(id: Long) {
+
+        println("here category $id")
+      var  recyclerView = findViewById<RecyclerView>(R.id.products_recyclerview)
+        recyclerView.setHasFixedSize(false)
+        recyclerView.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+
         /*  val requestidcat= RequestBody.create("multipart/form-data".toMediaTypeOrNull(),id.toString())
           val requestid= RequestBody.create("multipart/form-data".toMediaTypeOrNull(),"1")
           val requestpage= RequestBody.create("multipart/form-data".toMediaTypeOrNull(), "1")
           val requestsize= RequestBody.create("multipart/form-data".toMediaTypeOrNull(), "500")
           val requestsorted= RequestBody.create("multipart/form-data".toMediaTypeOrNull(), "id")
           val requestreverse= RequestBody.create("multipart/form-data".toMediaTypeOrNull(), "true")*/
-
-        apiService.getProductCat(session.getidAccount(),id).enqueue(object : retrofit2.Callback<ArrayList<Product>> {
+        AccountEnd.authToken=session.gettokenDetails()
+        apiService = AccountEnd.retrofit.create(ProductController::class.java)
+        apiService.getProductCat(id,session.getidAccount()).enqueue(object : retrofit2.Callback<ArrayList<Product>> {
             // apiService.getCategorie().enqueue(object : retrofit2.Callback<List<Category>> {
             override fun onFailure(call: Call<ArrayList<Product>>, t: Throwable) {
-
                 println(t.message + "*******************************")
                 t.message?.let { Log.d("Data error", it) }
-
             }
 
             override fun onResponse(call: Call<ArrayList<Product>>, response: Response<ArrayList<Product>>)
             {
-                products = response.body()!!
+                var products = response.body()!!
                 println(products)
-                productAdapter = ProductAdapter(products as ArrayList<Product>)
+                var productAdapter = ProductAdapter(products as ArrayList<Product>)
+                recyclerView.adapter=null
                 recyclerView.adapter = productAdapter
+
+
             }
 
         })
-        return 1
+
     }
 
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         if(item.itemId!=R.id.pp&&item.itemId!=R.id.addProduct&&item.itemId!=R.id.addCat){
             if(item.itemId==0){
+               // drawer.closeDrawer(GravityCompat.START)
                 apiService = AccountEnd.retrofit.create(ProductController::class.java)
+
                 getProducts()
-                drawer.closeDrawer(GravityCompat.START)
+
                 return true
             }
             else{
-                AccountEnd.authToken=session.gettokenDetails()
-                apiService = AccountEnd.retrofit.create(ProductController::class.java)
+               // drawer.closeDrawer(GravityCompat.START)
+
                 getproductcat(item.itemId.toLong())
-                drawer.closeDrawer(GravityCompat.START)
+               // drawer.closeDrawer(GravityCompat.START)
                 return true}
         }
         if(item.itemId==R.id.addProduct){

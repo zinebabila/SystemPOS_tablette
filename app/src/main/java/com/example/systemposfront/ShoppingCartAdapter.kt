@@ -66,21 +66,7 @@ class ShoppingCartAdapter(var context: Context, var cartItems: List<CartItem>) :
                 itemDetail.text = "${cart.product.prix.toString()}$"
             }
 
-            val SDK_INT = Build.VERSION.SDK_INT
-            if (SDK_INT > 8) {
-                val policy = StrictMode.ThreadPolicy.Builder()
-                    .permitAll().build()
-                StrictMode.setThreadPolicy(policy)
-                val `in`: InputStream =
-                    URL("http://192.168.2.106:9090/images/get/"+cart.product.images?.id!!).openConnection().getInputStream()
-                var profilePic = BitmapFactory.decodeStream(`in`)
-
-                val stream = ByteArrayOutputStream()
-                profilePic.compress(Bitmap.CompressFormat.PNG, 100, stream)
-
-                itemImage.setImageBitmap(profilePic)
-                // imagePro.setImageBitmap(StringToBitMap(response.body()!!))
-            }
+            Picasso.get().load(cart.product.images?.Url).into(itemImage)
             // This displays the cart item information for each item
 
 

@@ -22,7 +22,7 @@ interface AccountEnd {
             .create()
 
         var authToken:String?=null
-        private var BASE_URL = "http://192.168.2.106:9090"
+        private var BASE_URL = "http://192.168.86.23:9090"
 
         var retrofit: Retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)

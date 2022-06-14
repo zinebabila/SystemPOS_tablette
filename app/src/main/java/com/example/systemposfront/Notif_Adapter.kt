@@ -36,10 +36,6 @@ class Notif_Adapter(var context: Context, var notifis: ArrayList<Notification> =
     override fun onBindViewHolder(viewHolder: Notif_Adapter.ViewHolder, position: Int) {
 
         viewHolder.bindProduct(notifis[position])
-
-
-        // (context as ProfilActivity).coordinator
-
     }
 
 
@@ -56,40 +52,12 @@ class Notif_Adapter(var context: Context, var notifis: ArrayList<Notification> =
 
         fun bindProduct(notif: Notification) {
             if(notif.product!=null){
-                val SDK_INT = Build.VERSION.SDK_INT
-                if (SDK_INT > 8) {
-                    val policy = StrictMode.ThreadPolicy.Builder()
-                        .permitAll().build()
-                    StrictMode.setThreadPolicy(policy)
-                    val `in`: InputStream =
-                        URL("http://192.168.2.106:9090/images/get/"+ notif.product!!.images?.id!!).openConnection().getInputStream()
-                    var profilePic = BitmapFactory.decodeStream(`in`)
-
-                    val stream = ByteArrayOutputStream()
-                    profilePic.compress(Bitmap.CompressFormat.PNG, 100, stream)
-
-                    itemImage.setImageBitmap(profilePic)
-                    // imagePro.setImageBitmap(StringToBitMap(response.body()!!))
-                }
+                Picasso.get().load(notif.product!!.images?.Url).into(itemImage)
             }
             else{
                 println("************************")
                 println(notif.review!!.customer?.image)
-                val SDK_INT = Build.VERSION.SDK_INT
-                if (SDK_INT > 8) {
-                    val policy = StrictMode.ThreadPolicy.Builder()
-                        .permitAll().build()
-                    StrictMode.setThreadPolicy(policy)
-                    val `in`: InputStream =
-                        URL("http://192.168.2.106:9090/images/get/"+ notif.review!!.customer!!.image?.id!!).openConnection().getInputStream()
-                    var profilePic = BitmapFactory.decodeStream(`in`)
-
-                    val stream = ByteArrayOutputStream()
-                    profilePic.compress(Bitmap.CompressFormat.PNG, 100, stream)
-
-                    itemImage.setImageBitmap(profilePic)
-                    // imagePro.setImageBitmap(StringToBitMap(response.body()!!))
-                }
+                Picasso.get().load(notif.review!!.customer?.image?.Url).into(itemImage)
             }
             itemDes.text=notif.description
             var  simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")

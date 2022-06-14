@@ -72,21 +72,7 @@ class ProductAdapter(itemList: ArrayList<Product>) :
             holder.itemDetail.text = "${currentItem.prix.toString()}$"
         }
 
-        val SDK_INT = Build.VERSION.SDK_INT
-        if (SDK_INT > 8) {
-            val policy = StrictMode.ThreadPolicy.Builder()
-                .permitAll().build()
-            StrictMode.setThreadPolicy(policy)
-            val `in`: InputStream =
-                URL("http://192.168.2.106:9090/images/get/"+currentItem.images?.id!!).openConnection().getInputStream()
-            var profilePic = BitmapFactory.decodeStream(`in`)
-
-            val stream = ByteArrayOutputStream()
-            profilePic.compress(Bitmap.CompressFormat.PNG, 100, stream)
-
-            holder.itemImage.setImageBitmap(profilePic)
-            // imagePro.setImageBitmap(StringToBitMap(response.body()!!))
-        }
+        Picasso.get().load(currentItem.images?.Url).into(holder.itemImage)
         if (currentItem.qteStock != 0) {
             Observable.create(ObservableOnSubscribe<MutableList<CartItem>> {
 
