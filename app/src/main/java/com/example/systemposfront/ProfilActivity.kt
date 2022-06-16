@@ -204,8 +204,14 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
         getCtegories()
 
         /***************************les produits****************************************/
-        apiService = AccountEnd.retrofit.create(ProductController::class.java)
-        getProducts()
+        if (intent.hasExtra("nice")) {
+            apiService = AccountEnd.retrofit.create(ProductController::class.java)
+            getproductcat(intent.getLongExtra("id",0L))
+        }
+        else{
+            apiService = AccountEnd.retrofit.create(ProductController::class.java)
+            getProducts()
+        }
 
         /*************************la cart********************************/
         var list: MutableList<CartItem>? =ShoppingCart.getCart()
@@ -297,7 +303,7 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
                     .build()
 
                 val request = Request.Builder()
-                    .url("http://192.168.86.23:9090/data/subscribes")
+                    .url("http://192.168.2.103:9090/data/subscribes")
                     // .header("Accept", "application/json; q=0.5")
                     // .addHeader("Accept", "text/event-stream")
 
@@ -328,7 +334,15 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
 
         startActivity(intent)
     }
+    private fun goSame(id:Long) {
+        val bundle = Bundle()
+        val intent = Intent(this, ProfilActivity::class.java)
+        bundle.putString("nice", "faillure")
+        bundle.putLong("id", id)
+        intent.putExtras(bundle)
 
+        startActivity(intent)
+    }
     private fun goparent(string: String, string1: String, string2: String, string3: String) {
         ShoppingCart.deleteCart()
         val bundle = Bundle()
@@ -634,22 +648,19 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
 
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        if(item.itemId!=R.id.pp&&item.itemId!=R.id.addProduct&&item.itemId!=R.id.addCat){
-            if(item.itemId==0){
-               // drawer.closeDrawer(GravityCompat.START)
-                apiService = AccountEnd.retrofit.create(ProductController::class.java)
 
-                getProducts()
-
-                return true
-            }
-            else{
-               // drawer.closeDrawer(GravityCompat.START)
-
-                getproductcat(item.itemId.toLong())
-               // drawer.closeDrawer(GravityCompat.START)
-                return true}
+        if(item.itemId==0){
+            apiService = AccountEnd.retrofit.create(ProductController::class.java)
+            getProducts()
+            drawer.closeDrawer(GravityCompat.START)
+            return true
         }
+        if(item.itemId!=0&&item.itemId!=R.id.addProduct&&item.itemId!=R.id.addCat){
+
+            goSame(item.itemId.toLong())
+            drawer.closeDrawer(GravityCompat.START)
+            return true}
+
         if(item.itemId==R.id.addProduct){
             goToSecondActivity("addproduct")
             return true
