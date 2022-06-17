@@ -2,29 +2,25 @@ package com.example.systemposfront
 
 
 
- import android.content.ContentValues.TAG
-import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
-import android.content.SharedPreferences
-import android.os.Bundle
-import android.util.Log
-import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import com.example.systemposfront.bo.JwtRequest
-import com.example.systemposfront.bo.JwtResponse
-import com.example.systemposfront.controller.AccountController
-import com.example.systemposfront.interfaces.AccountEnd
-import com.example.systemposfront.interfaces.AuthenEnd
-import com.example.systemposfront.security.TokenManager
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.util.regex.Pattern
+ import android.content.DialogInterface
+ import android.content.Intent
+ import android.os.Bundle
+ import android.view.View
+ import android.widget.Button
+ import android.widget.EditText
+ import android.widget.TextView
+ import androidx.appcompat.app.AlertDialog
+ import androidx.appcompat.app.AppCompatActivity
+ import com.auth0.android.jwt.JWT
+ import com.example.systemposfront.bo.JwtRequest
+ import com.example.systemposfront.bo.JwtResponse
+ import com.example.systemposfront.controller.AccountController
+ import com.example.systemposfront.interfaces.AuthenEnd
+ import com.example.systemposfront.security.TokenManager
+ import retrofit2.Call
+ import retrofit2.Callback
+ import retrofit2.Response
+ import java.util.regex.Pattern
 
 
 class LoginActivity : AppCompatActivity() {
@@ -72,15 +68,36 @@ class LoginActivity : AppCompatActivity() {
                            println("okkkkkkkkkkk")
                           val jwt: JwtResponse
                            // Log.d(TAG, "ResponseBody: ${response.body().toString()}")
-                            if(response.body()==null){
+                            if(response.body()!!.type==-1){
+                                goCompteinactifLogin()
+                            }
+                            else if(response.body()!!.type==0){
                                 goLogin()
                             }
                             else{
                             jwt =  response.body()!!
-                            println(jwt.jwtToken.toString()+"*************")
-                          preferences.createloginsession(jwt.jwtToken.toString(), jwt.user?.id!!,jwt.user?.type!!)
+                            println(jwt.token.toString()+"*************")
+                                var jwtt: JWT = JWT(jwt.token!!)
+                                var id_acount: String = jwtt.getClaim("AccountID").asString()!!
+                                val roles: Array<String> = jwtt.getClaim("roles").asArray(String::class.java)
+                              var admin=0
+                                for( r in roles){
+                                    println("**************************************************")
+                                    println(r)
+                                    if(r.equals("ROLE_Admin")){
+                                        println("Admin")
+                                        preferences.createloginsession(jwt.token.toString(), id_acount.toLong(),"Admin")
+                                       admin=1
+                                        goToSecondActivity()
+                                    }
 
+                                }
+                                if(admin==0){
+                                println("User")
+                                preferences.createloginsession(jwt.token.toString(), id_acount.toLong(),"User")
                             goToSecondActivity()}
+                            }
+
                         }
 
                         override fun onFailure(call: Call<JwtResponse>, t: Throwable) {
@@ -106,6 +123,25 @@ class LoginActivity : AppCompatActivity() {
 
 }
 
+    private fun goCompteinactifLogin() {
+        val dialogBuilder = AlertDialog.Builder(this)
+
+        // set message of alert dialog
+        dialogBuilder.setMessage("Compte inactif ?")
+            // if the dialog is cancelable
+            .setCancelable(false)
+            .setNegativeButton("Cancel", DialogInterface.OnClickListener {
+                    dialog, id -> dialog.cancel()
+            })
+
+        // create dialog box
+        val alert = dialogBuilder.create()
+        // set title for alert dialog box
+        alert.setTitle("Failed")
+        // show alert dialog
+        alert.show()
+    }
+
     private fun goLogin() {
         val dialogBuilder = AlertDialog.Builder(this)
 
@@ -113,11 +149,6 @@ class LoginActivity : AppCompatActivity() {
         dialogBuilder.setMessage("Email and password failed ?")
             // if the dialog is cancelable
             .setCancelable(false)
-            // positive button text and action
-            .setPositiveButton("Proceed", DialogInterface.OnClickListener {
-                    dialog, id -> finish()
-            })
-            // negative button text and action
             .setNegativeButton("Cancel", DialogInterface.OnClickListener {
                     dialog, id -> dialog.cancel()
             })
@@ -133,8 +164,8 @@ class LoginActivity : AppCompatActivity() {
 
     private fun setLoginRegistrationData(): JwtRequest {
 var account=JwtRequest()
-account.userName=username;
-        account.userPassword=password
+account.email=username;
+        account.password=password
         println(account.toString()+"*******************************")
         return account
 

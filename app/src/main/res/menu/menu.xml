@@ -16,4 +16,8 @@
     <item android:id="@+id/action_settings"
         android:title="settings"
         app:showAsAction="never"/>
+    <item android:id="@+id/logout"
+        android:icon="@drawable/iconslog"
+        android:title="Logout"
+        app:showAsAction="always" />
 </menu>

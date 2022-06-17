@@ -1,6 +1,7 @@
 package com.example.systemposfront.bo
 
 class JwtResponse {
-     val user: Account? = null
-     val jwtToken: String? = null
+      val token: String? = null
+      val message: String? = null
+      val type = 0
 }

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import com.example.systemposfront.LoginActivity
+import com.example.systemposfront.bo.Role
 
 
 class TokenManager {
@@ -25,11 +26,11 @@ class TokenManager {
         val KEY_first: String ="First"
         val KEY_last: String ="last"
     }
-    fun createloginsession (name: String, id: Long, type: Char) {
+    fun createloginsession (name: String, id: Long, role: String) {
         editor.putBoolean(IS_LOGIN, true)
         editor.putString(KEY_NAME, name)
         editor.putLong(KEY_Id,id)
-        editor.putString(KEY_Type,type.toString())
+    editor.putString(KEY_Type,role)
         editor.commit()
     }
     fun checklogin(){
@@ -41,16 +42,15 @@ class TokenManager {
         return pref.getString(KEY_NAME,"").toString()
 
     }
+    fun getRole():String{
+        return pref.getString(KEY_Type,"").toString()
+    }
     fun getidAccount(): Long{
         return pref.getLong(KEY_Id,0)
 
     }
     fun getfirst(): String{
         return pref.getString(KEY_first,"").toString()
-
-    }
-    fun gettypeAccount(): String{
-        return pref.getString(KEY_Type,"").toString()
 
     }
     fun getlast(): String{

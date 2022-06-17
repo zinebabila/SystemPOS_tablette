@@ -45,5 +45,10 @@ interface ProductController {
                    @Part("categoryID")  IdC: RequestBody,
                    @Part("merchant_Account_ID")  IdM: RequestBody
     ): Call<Product>
+    @GET("/merchants/MerchantCreator/getAllProducts/{id}")
+    fun getProductsCreator(@Path("id") id:Long): Call<ArrayList<Product>>
+    @GET("/categories/MerchantCreator/getAllProducts/{idC}/{idA}")
+    abstract fun getProductMerchantCrCat(@Path("idC")id: Long,@Path("idA") getidAccount: Long): Call<ArrayList<Product>>
+
 
 }

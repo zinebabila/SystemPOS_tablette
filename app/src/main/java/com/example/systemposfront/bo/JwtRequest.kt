@@ -1,6 +1,6 @@
 package com.example.systemposfront.bo
 
 class JwtRequest {
-     var userName: String? = null
-     var userPassword: String? = null
+      var email: String? = null
+      var password: String? = null
 }

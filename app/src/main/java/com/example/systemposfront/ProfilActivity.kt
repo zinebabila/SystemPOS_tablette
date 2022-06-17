@@ -172,6 +172,10 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
         }
 
         /**************************************les information du compte***************************************************/
+
+       println(session.getRole())
+        println(session.getidAccount())
+       if(session.getRole().equals("Admin")){
         AccountEnd.authToken = session.gettokenDetails()
             apimerchant = AccountEnd.retrofit.create(MerchantController::class.java)
             apimerchant.getMerchant(session.getidAccount()).enqueue(object : retrofit2.Callback<Merchant> {
@@ -195,11 +199,39 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
                     println(t.message)
                 }
 
-            })
+            })}
+        else{
+           AccountEnd.authToken = session.gettokenDetails()
+           apimerchant = AccountEnd.retrofit.create(MerchantController::class.java)
+           apimerchant.getCaissier(session.getidAccount()).enqueue(object : retrofit2.Callback<Cashier> {
+               override fun onResponse(call: Call<Cashier>, response: Response<Cashier>) {
+                   if (response.body() != null) {
+                       var merchant = response.body()!!
+                       println(merchant.firstName!!)
+                       detail.text =
+                           merchant.firstName + "  " + merchant.lastName + "\n" + merchant.numTel
+                       session.addinfo(merchant.firstName!!,merchant.lastName!!)
+                       if(merchant.image!=null) {
+                           Picasso.get().load(merchant.image?.Url).into(imagePro)
+                       }
+                   } else {
+                       println("error")
+                   }
+
+               }
+
+               override fun onFailure(call: Call<Cashier>, t: Throwable) {
+                   println(t.message)
+               }
+
+           })
+            println("je suis caissier")
+        }
 
 
         /****************************les categories************************************/
         AccountEnd.authToken = session.gettokenDetails()
+        println(session.gettokenDetails())
         cat = AccountEnd.retrofit.create(CategorieController::class.java)
         getCtegories()
 
@@ -495,7 +527,8 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
         return totalPrice
     }
     private fun afficher_devise() {
-        apiServiceMer.getMerchant(1).enqueue(object : retrofit2.Callback<Merchant> {
+        if(session.getRole().equals("Admin")){
+        apiServiceMer.getMerchant(session.getidAccount()).enqueue(object : retrofit2.Callback<Merchant> {
             // apiService.getCategorie().enqueue(object : retrofit2.Callback<List<Category>> {
             override fun onFailure(call: Call<Merchant>, t: Throwable) {
 
@@ -537,7 +570,52 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
                 alert.show()
             }
 
-        })
+        })}
+        else{
+            apiServiceMer.getDeviseMerchant(session.getidAccount()).enqueue(object : retrofit2.Callback<Merchant> {
+                // apiService.getCategorie().enqueue(object : retrofit2.Callback<List<Category>> {
+                override fun onFailure(call: Call<Merchant>, t: Throwable) {
+
+                    println(t.message + "*******************************")
+                    t.message?.let { Log.d("Data error", it) }
+
+                }
+
+                override fun onResponse(call: Call<Merchant>, response: Response<Merchant>)
+                {
+                    merchant = response.body()!!
+                    println(merchant)
+                    println(merchant.currencies)
+
+
+                    val dialogBuilder = AlertDialog.Builder(this@ProfilActivity)
+                    dialogBuilder.setTitle("Currency choice")
+                    // set message of alert dialog
+
+                    val inflater = layoutInflater
+                    val dialogLayout  = inflater.inflate(R.layout.currency_rececle, null)
+                    val inc  = dialogLayout.findViewById<RecyclerView>(R.id.currency_rec)
+                    inc.layoutManager=StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+                    curencyAdapter = CurrencyAdapter(this@ProfilActivity, merchant.currencies)
+                    inc.adapter = curencyAdapter
+                    curencyAdapter.coupon=coupon
+                    dialogBuilder.setView(dialogLayout)
+                        // if the dialog is cancelable
+                        .setCancelable(true)
+
+                        // positive button text and action
+                        // negative button text and action
+                        .setNegativeButton("Cancel", DialogInterface.OnClickListener {
+                                dialog, id -> dialog.cancel()
+                        })
+                    val alert = dialogBuilder.create()
+                    // set title for alert dialog box
+                    // show alert dialog
+                    alert.show()
+                }
+
+            })
+        }
     }
 
 
@@ -575,6 +653,7 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
          val requestsize= RequestBody.create("multipart/form-data".toMediaTypeOrNull(), "500")
          val requestsorted= RequestBody.create("multipart/form-data".toMediaTypeOrNull(), "id")
          val requestreverse= RequestBody.create("multipart/form-data".toMediaTypeOrNull(), "true")*/
+        if(session.getRole().equals("Admin")){
         apiService.getProducts(session.getidAccount()).enqueue(object : retrofit2.Callback<ArrayList<Product>> {
             // apiService.getCategorie().enqueue(object : retrofit2.Callback<List<Category>> {
             override fun onFailure(call: Call<ArrayList<Product>>, t: Throwable) {
@@ -600,7 +679,35 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
                 }
             }
 
-        })
+        })}
+        else{
+            apiService.getProductsCreator(session.getidAccount()).enqueue(object : retrofit2.Callback<ArrayList<Product>> {
+                // apiService.getCategorie().enqueue(object : retrofit2.Callback<List<Category>> {
+                override fun onFailure(call: Call<ArrayList<Product>>, t: Throwable) {
+
+                    println(t.message + "*******************************")
+                    t.message?.let { Log.d("Data error", it) }
+
+                }
+
+                override fun onResponse(
+                    call: Call<ArrayList<Product>>,
+                    response: Response<ArrayList<Product>>
+                ) {
+
+                    if(response.body()!=null) {
+                        var products = response.body()!!
+                        println(products)
+                        productAdapter = ProductAdapter(products as ArrayList<Product>)
+                        recyclerView.adapter = productAdapter
+                    }
+                    else{
+                        println("il y a rien")
+                    }
+                }
+
+            })
+        }
 
     }
 
@@ -622,6 +729,8 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
           val requestsize= RequestBody.create("multipart/form-data".toMediaTypeOrNull(), "500")
           val requestsorted= RequestBody.create("multipart/form-data".toMediaTypeOrNull(), "id")
           val requestreverse= RequestBody.create("multipart/form-data".toMediaTypeOrNull(), "true")*/
+
+        if(session.getRole().equals("Admin")){
         AccountEnd.authToken=session.gettokenDetails()
         apiService = AccountEnd.retrofit.create(ProductController::class.java)
         apiService.getProductCat(id,session.getidAccount()).enqueue(object : retrofit2.Callback<ArrayList<Product>> {
@@ -642,7 +751,30 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
 
             }
 
-        })
+        })}
+            else{
+            AccountEnd.authToken=session.gettokenDetails()
+            apiService = AccountEnd.retrofit.create(ProductController::class.java)
+            apiService.getProductMerchantCrCat(id,session.getidAccount()).enqueue(object : retrofit2.Callback<ArrayList<Product>> {
+                // apiService.getCategorie().enqueue(object : retrofit2.Callback<List<Category>> {
+                override fun onFailure(call: Call<ArrayList<Product>>, t: Throwable) {
+                    println(t.message + "*******************************")
+                    t.message?.let { Log.d("Data error", it) }
+                }
+
+                override fun onResponse(call: Call<ArrayList<Product>>, response: Response<ArrayList<Product>>)
+                {
+                    var products = response.body()!!
+                    println(products)
+                    var productAdapter = ProductAdapter(products as ArrayList<Product>)
+                    recyclerView.adapter=null
+                    recyclerView.adapter = productAdapter
+
+
+                }
+
+            })
+        }
 
     }
 
@@ -704,6 +836,11 @@ class ProfilActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelect
 
 
 
+            false
+        })
+        val logout=menu.findItem(R.id.logout)
+        logout.setOnMenuItemClickListener(MenuItem.OnMenuItemClickListener{
+            session.Logoutlser()
             false
         })
 
